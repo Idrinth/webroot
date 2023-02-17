@@ -1,0 +1,21 @@
+{
+    "name": "idrinth/webroot",
+    "description": "This project allows you to easily configure virtual hosts with apache2.",
+    "keywords": [
+        "apache2",
+        "virtualhost",
+        "let's encrypt",
+        "linux"
+    ],
+    "authors": [
+        {
+            "name": "Björn Büttner",
+            "homepage": "https://github.com/idrinth"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "ext-pdo": "*",
+        "twig/twig": "*"
+    }
+}

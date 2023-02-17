@@ -1,0 +1,34 @@
+{% for host in hosts %}
+    <VirtualHost *:80>
+        {% include 'config-based-virtual-host.twig' %}
+        RewriteEngine On
+        RewriteCond %{HTTPS} !=on
+        RewriteRule (.*) https://{{ host.domain }}$1 [R,L]
+    </VirtualHost>
+    <VirtualHost *:443>
+        {% include 'config-based-virtual-host.twig' %}
+        SSLEngine On
+        SSLCertificateFile    /etc/ssl/certs/{{ host.domain }}.crt
+        SSLCertificateKeyFile /etc/ssl/private/{{ host.domain }}.key
+        SSLCertificateChainFile    /etc/ssl/certs/{{ host.domain }}_chain.crt
+    </VirtualHost>
+{% endfor %}
+{% for domain in domains %}
+    {% set host=domain %}
+    <VirtualHost *:80>
+        {% include 'config-based-virtual-host.twig' %}
+        SSLEngine Off
+        RewriteEngine On
+        RewriteRule (.*) https://default.{{ domain.domain }}$1 [R,L]
+    </VirtualHost>
+    <VirtualHost *:443>
+        {% include 'config-based-virtual-host.twig' %}
+        SSLEngine On
+        RewriteEngine On
+        RewriteRule (.*) https://default.{{ domain.domain }}$1 [R,L]
+        SSLEngine On
+        SSLCertificateFile    /etc/ssl/certs/default.{{ domain.domain }}.crt
+        SSLCertificateKeyFile /etc/ssl/private/default.{{ domain.domain }}.key
+        SSLCertificateChainFile    /etc/ssl/certs/default.{{ domain.domain }}_chain.crt
+    </VirtualHost>
+{% endfor %}
