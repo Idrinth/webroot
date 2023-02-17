@@ -17,5 +17,19 @@
         "php": "^7.4",
         "ext-pdo": "*",
         "twig/twig": "*"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*",
+        "phpunit/phpunit": "*",
+        "symfony/process": "*",
+        "phan/phan": "*",
+        "php-parallel-lint/php-parallel-lint": "*"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --testdox test",
+        "test-standards": "vendor/bin/phpcs --standard=psr12 bin src test",
+        "test-static": "vendor/bin/phan --no-progress-bar",
+        "fix-standards": "vendor/bin/phpcbf --standard=psr12 bin src test",
+        "lint": "vendor/bin/parallel-lint src bin test"
     }
 }
