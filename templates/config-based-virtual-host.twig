@@ -1,9 +1,6 @@
 ServerAdmin {{ host.admin }}
-Servername {{ host.domain }}
-{% for alias in host.aliases %}
-    ServerAlias {{ alias }}
-{% endfor %}
-DocumentRoot /var/{{ host.dir }}
+Servername {{ host.vhost }}
+DocumentRoot {{ host.webroot }}
 ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
 ErrorLog /var/log/{{ host.domain }}-error.log
 LogLevel warn
@@ -13,7 +10,7 @@ CustomLog /var/log/{{ host.domain }}-access.log "%l %u %t \"%r\" %>s %b"
     AllowOverride None
     Require all denied
 </Directory>
-<Directory /var/{{ host.domain|replace('*', 'default') }}{% if host.specific_webroot %}/public{% endif %}>
+<Directory {{ host.root }}>
     Options +ExecCGI -Indexes +FollowSymLinks +MultiViews
     AllowOverride All
     Require all granted

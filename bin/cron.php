@@ -1,13 +1,15 @@
 <?php
 
-require_once __DIR__ . '/../src/autoload.php';
+use De\Idrinth\WebRoot\VirtualHostGenerator;
+use Dotenv\Dotenv;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
-exec("sh /etc/init.d/apache2 stop");
-$start = microtime(true);
-file_put_contents(
-    '/etc/apache2/sites-enabled/all.conf',
-    (new VirtualHostList())->show(true)
-    );
-sleep(15);
-exec("sh /etc/init.d/apache2 restart");
-die("\ndone, ".(microtime(true)-$start)."s\n\n" );
+require_once dirname(__DIR__) . '/src/autoload.php';
+
+Dotenv::createImmutable(dirname(__DIR__));
+
+(new VirtualHostGenerator(
+    new PDO('mysql:dbname=' . $_ENV['DB_DATABASE'] . ';host=' . $_ENV['DB_HOST'], $_ENV['DB_PASSWORD'], $_ENV['DB_PASSWORD']),
+    new Environment(new FilesystemLoader(dirname(__DIR__) . '/templates'))
+))->create();

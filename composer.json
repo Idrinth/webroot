@@ -13,10 +13,21 @@
             "homepage": "https://github.com/idrinth"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "De\\Idrinth\\WebRoot\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "De\\Idrinth\\WebRoot\\": "test"
+        }
+    },
     "require": {
         "php": "^7.4 | ^8",
         "ext-pdo": "*",
-        "twig/twig": "*"
+        "twig/twig": "*",
+        "vlucas/phpdotenv": "*"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "*",

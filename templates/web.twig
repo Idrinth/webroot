@@ -7,7 +7,7 @@
         <h1>404 - Did you misstep?</h1>
         <p>You managed to reach a domain, that is not used or unknown. Find a few actually used domains below:</p>
         <ul>{% for host in hosts %}
-            <li><a href="https://{{ host.domain }}" target="_blank">{{ host.domain }}</a></li>
+            <li><a href="https://{{ host }}" target="_blank">{{ host }}</a></li>
         {% endfor %}</ul>
         <p>This domain is <strong>NOT</strong> tracked besides the default server-logs.</p>
     </body>
