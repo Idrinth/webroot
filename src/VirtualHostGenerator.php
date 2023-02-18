@@ -16,20 +16,22 @@ class VirtualHostGenerator
     }
     private function certificate(string $vhost, string $admin): bool
     {
-        exec(
-            "certbot certonly"
-            . " --non-interactive"
-            . " --expand"
-            . " --quiet "
-            . "--standalone "
-            . "--domains=$vhost"
-            . " --agree-tos"
-            . " --email $admin"
-        );
-        if(!is_file("/etc/letsencrypt/live/$vhost/cert.pem")) {
-            return false;
-        }
         $from = "/etc/letsencrypt/live/$vhost";
+        if (!is_file("$from/cert.pem") || filemtime("$from/cert.pem") < time() - 60*24*60*60) {
+            exec(
+                "certbot certonly"
+                . " --non-interactive"
+                . " --expand"
+                . " --quiet "
+                . "--standalone "
+                . "--domains=$vhost"
+                . " --agree-tos"
+                . " --email $admin"
+            );
+            if(!is_file("$from/cert.pem")) {
+                return false;
+            }
+        }
         $to = "/etc/ssl/certs/$vhost";
         exec("cp $from/cert.pem $to.crt");
         exec("cp $from/chain.pem {$to}_chain.crt");
