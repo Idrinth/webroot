@@ -42,6 +42,7 @@ class VirtualHostGenerator
     {
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $vhost = trim($row['name'] . '.' . $row['domain'], '.');
+            echo "Handling $vhost\n";
             if (gethostbyname($vhost) !== $ip) {
                 continue;
             }
@@ -79,6 +80,7 @@ class VirtualHostGenerator
     {
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $vhost = 'default.' . $row['domain'];
+            echo "Handling $vhost\n";
             if (gethostbyname($row['domain']) !== $ip) {
                 continue;
             }
@@ -97,6 +99,7 @@ class VirtualHostGenerator
     public function create()
     {
         exec("service apache2 stop");
+        sleep(60);
         $hostname = gethostname();
         $ip = gethostbyname($hostname);
         $stmt = $this->database->prepare('SELECT virtualhost.name,virtualhost.extra_webroot,domain.domain, domain.admin
