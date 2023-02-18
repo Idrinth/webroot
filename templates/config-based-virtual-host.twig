@@ -1,5 +1,5 @@
 ServerAdmin {{ host.admin }}
-Servername {{ host.vhost }}
+{% if host.vhost starts with '*' %}Servername {{ host.vhost }}{% else %}SeverAlias {{ host.domain }}{% endif %}
 DocumentRoot {{ host.webroot }}
 ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
 ErrorLog /var/log/{{ host.domain }}-error.log
