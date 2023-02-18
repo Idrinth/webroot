@@ -10,9 +10,9 @@
         {% include 'config-based-virtual-host.twig' %}
 
         SSLEngine On
-        SSLCertificateFile    /etc/letsencrypt/live/{{ host.domain }}/cert.crt
+        SSLCertificateFile    /etc/letsencrypt/live/{{ host.domain }}/cert.pem
         SSLCertificateKeyFile /etc/letsencrypt/live/{{ host.domain }}/privkey.pem
-        SSLCertificateChainFile    /etc/letsencrypt/live/{{ host.domain }}/chain.crt
+        SSLCertificateChainFile    /etc/letsencrypt/live/{{ host.domain }}/chain.pem
     </VirtualHost>
 {% endfor %}
 {% for host in defaulthosts %}
@@ -31,8 +31,8 @@
         RewriteCond %{HTTP_HOST} !^{{ host.domain }}$ [NC]
         RewriteRule (.*) https://{{ host.domain }}$1 [R,L]
         SSLEngine On
-        SSLCertificateFile    /etc/letsencrypt/live/{{ host.domain }}/cert.crt
+        SSLCertificateFile    /etc/letsencrypt/live/{{ host.domain }}/cert.pem
         SSLCertificateKeyFile /etc/letsencrypt/live/{{ host.domain }}/privkey.pem
-        SSLCertificateChainFile    /etc/letsencrypt/live/{{ host.domain }}/chain.crt
+        SSLCertificateChainFile    /etc/letsencrypt/live/{{ host.domain }}/chain.pem
     </VirtualHost>
 {% endfor %}
