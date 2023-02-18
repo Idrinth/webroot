@@ -7,7 +7,7 @@ use Twig\Loader\FilesystemLoader;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-Dotenv::createImmutable(dirname(__DIR__));
+Dotenv::createImmutable(dirname(__DIR__))->load();
 
 header('Content-Type: text/html', true, 404);
 echo (new VirtualHostDisplay(
