@@ -32,10 +32,6 @@ class VirtualHostGenerator
                 return false;
             }
         }
-        $to = "/etc/ssl/certs/$vhost";
-        exec("cp $from/cert.pem $to.crt");
-        exec("cp $from/chain.pem {$to}_chain.crt");
-        exec("cp $from/privkey.pem /etc/ssl/private/$vhost.key");
         return true;
     }
     private function buildHostList(\PDOStatement $statement, array &$virtualhosts, string $ip): void
