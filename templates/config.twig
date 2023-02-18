@@ -28,7 +28,7 @@
 
         SSLEngine On
         RewriteEngine On
-        RewriteCond %{HTTP_HOST} -neq "{{ host.domain }}"
+        RewriteCond %{HTTP_HOST} -ne "{{ host.domain }}"
         RewriteRule (.*) https://{{ host.domain }}$1 [R,L]
         SSLEngine On
         SSLCertificateFile    /etc/ssl/certs/{{ host.domain }}.crt
