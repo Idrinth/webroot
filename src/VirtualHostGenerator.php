@@ -84,6 +84,9 @@ class VirtualHostGenerator
             if (gethostbyname($row['domain']) !== $ip) {
                 continue;
             }
+            if (gethostbyname($vhost) !== $ip) {
+                continue;
+            }
             if (!$this->certificate($vhost, $row['admin'])) {
                 continue;
             }
