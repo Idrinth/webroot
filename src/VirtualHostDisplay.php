@@ -22,7 +22,7 @@ INNER JOIN domain ON domain.aid=virtualhost.domain
 WHERE NOT virtualhost.hidden');
         $stmt->execute();
         return $this->twig->render('web.twig', ['hosts' => array_map(function(array $data) {
-            return trim($data['name'] . '.' .$data['domain']);
+            return trim($data['name'] . '.' .$data['domain'], '.');
         }, $stmt->fetchAll(PDO::FETCH_ASSOC))]);
     }
 }
