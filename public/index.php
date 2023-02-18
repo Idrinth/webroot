@@ -5,7 +5,7 @@ use Dotenv\Dotenv;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-require_once dirname(__DIR__) . '/src/autoload.php';
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 Dotenv::createImmutable(dirname(__DIR__));
 
