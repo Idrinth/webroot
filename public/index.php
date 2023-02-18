@@ -11,7 +11,7 @@ Dotenv::createImmutable(dirname(__DIR__));
 
 header('Content-Type: text/html', true, 404);
 echo (new VirtualHostDisplay(
-    new PDO('mysql:dbname=' . $_ENV['DB_DATABASE'] . ';host=' . $_ENV['DB_HOST'], $_ENV['DB_PASSWORD'], $_ENV['DB_PASSWORD']),
+    new PDO('mysql:dbname=' . $_ENV['DB_DATABASE'] . ';host=' . $_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']),
     new Environment(new FilesystemLoader(dirname(__DIR__) . '/templates'))
 ))->display();
 
