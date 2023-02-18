@@ -21,14 +21,14 @@
 
         SSLEngine Off
         RewriteEngine On
-        RewriteRule (.*) https://default.{{ domain.domain }}$1 [R,L]
+        RewriteRule (.*) https://default.{{ host.domain }}$1 [R,L]
     </VirtualHost>
     <VirtualHost *:443>
         {% include 'config-based-virtual-host.twig' %}
 
         SSLEngine On
         RewriteEngine On
-        RewriteRule (.*) https://default.{{ domain.domain }}$1 [R,L]
+        RewriteRule (.*) https://default.{{ host.domain }}$1 [R,L]
         SSLEngine On
         SSLCertificateFile    /etc/ssl/certs/default.{{ domain.domain }}.crt
         SSLCertificateKeyFile /etc/ssl/private/default.{{ domain.domain }}.key
