@@ -1,5 +1,5 @@
 ServerAdmin {{ host.admin }}
-{% if host.vhost starts with '*' %}Servername {{ host.domian }}
+{% if host.vhost starts with '*' %}Servername {{ host.domain }}
 ServerAlias {{ host.vhost }}{% else %}Servername {{ host.vhost }}{% endif %}
 
 DocumentRoot {{ host.webroot }}
