@@ -39,13 +39,16 @@ class VirtualHostGenerator
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $vhost = trim($row['name'] . '.' . $row['domain'], '.');
             echo "Handling $vhost\n";
-            if (gethostbyname($vhost) !== $ip) {
+            if (gethostbyname($vhost . '.') !== $ip) {
                 continue;
             }
-            if (!$this->certificate($vhost . '.', $row['admin'])) {
+            if (gethostbyname('www.' . $vhost . '.') !== $ip) {
                 continue;
             }
-            if (!$this->certificate("www.$vhost.", $row['admin'])) {
+            if (!$this->certificate($vhost, $row['admin'])) {
+                continue;
+            }
+            if (!$this->certificate("www.$vhost", $row['admin'])) {
                 continue;
             }
             $virtualhosts[] = [
