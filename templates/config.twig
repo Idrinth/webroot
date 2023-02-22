@@ -16,6 +16,7 @@
     </VirtualHost>
 {% endfor %}
 {% for host in defaulthosts %}
+    {% set default_domain=host.domain %}
     <VirtualHost *:80>
         {% include 'config-based-virtual-host.twig' %}
 
@@ -36,3 +37,48 @@
         SSLCertificateChainFile    /etc/letsencrypt/live/{{ host.domain }}/chain.pem
     </VirtualHost>
 {% endfor %}
+<VirtualHost *:80>
+    DocumentRoot /var/www/public
+    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+    <Directory />
+        Options +FollowSymLinks
+        AllowOverride None
+        Require all denied
+    </Directory>
+    <Directory /var/www>
+        Options +ExecCGI -Indexes +FollowSymLinks +MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+    <Directory /usr/lib/cgi-bin>
+        AllowOverride None
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+        Require all granted
+    </Directory>
+
+    SSLEngine Off
+    RewriteEngine On
+    RewriteRule (.*) https://{{ default_domain }}$1 [R,L]
+</VirtualHost>
+<VirtualHost *:443>
+    DocumentRoot /var/www/public
+    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+    <Directory />
+        Options +FollowSymLinks
+        AllowOverride None
+        Require all denied
+    </Directory>
+    <Directory /var/www>
+        Options +ExecCGI -Indexes +FollowSymLinks +MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+    <Directory /usr/lib/cgi-bin>
+        AllowOverride None
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+        Require all granted
+    </Directory>
+
+    RewriteEngine On
+    RewriteRule (.*) https://{{ default.domain }}$1 [R,L]
+</VirtualHost>
