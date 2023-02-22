@@ -39,10 +39,22 @@ $pdo->exec("CREATE TABLE `virtualhost` (
 	`domain` INT(10) UNSIGNED NOT NULL,
 	`server` INT(10) UNSIGNED NOT NULL,
 	PRIMARY KEY (`aid`) USING BTREE,
+	UNIQUE INDEX `name_domain` (`name`, `domain`) USING BTREE,
 	INDEX `domain` (`domain`) USING BTREE,
 	INDEX `server` (`server`) USING BTREE,
-	CONSTRAINT `domain` FOREIGN KEY (`domain`) REFERENCES `domain` (`aid`) ON UPDATE NO ACTION ON DELETE CASCADE,
-	CONSTRAINT `server` FOREIGN KEY (`server`) REFERENCES `server` (`aid`) ON UPDATE NO ACTION ON DELETE CASCADE
+	CONSTRAINT `domain` FOREIGN KEY (`domain`) REFERENCES `virtualhosts`.`domain` (`aid`) ON UPDATE NO ACTION ON DELETE CASCADE,
+	CONSTRAINT `server` FOREIGN KEY (`server`) REFERENCES `virtualhosts`.`server` (`aid`) ON UPDATE NO ACTION ON DELETE CASCADE
+)
+COLLATE='ascii_bin'
+ENGINE=InnoDB;");
+$pdo->exec("CREATE TABLE `virtualhost_domain_alias` (
+	`virtualhost` INT(10) UNSIGNED NOT NULL,
+	`domain` INT(10) UNSIGNED NOT NULL,
+	`subdomain` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'ascii_bin',
+	UNIQUE INDEX `virtualhost_domain` (`virtualhost`, `domain`) USING BTREE,
+	UNIQUE INDEX `domain_subdomain` (`domain`, `subdomain`) USING BTREE,
+	CONSTRAINT `FK_virtualhost_domain_alias_domain` FOREIGN KEY (`domain`) REFERENCES `virtualhosts`.`domain` (`aid`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_virtualhost_domain_alias_virtualhost` FOREIGN KEY (`virtualhost`) REFERENCES `virtualhosts`.`virtualhost` (`aid`) ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 COLLATE='ascii_bin'
 ENGINE=InnoDB;");

@@ -51,19 +51,30 @@ class VirtualHostGenerator
             if (!$this->certificate("www.$vhost", $row['admin'])) {
                 continue;
             }
+            $aliases = ["www.$vhost"];
+            $stmt = $this->database->prepare('SELECT virtualhost_domain_alias.subdomain,domain.domain,domain.admin '
+                    . 'FROM virtualhost_domain_alias '
+                    . 'INNER JOIN domain ON domain.aid=virtualhost_domain_alias.domain '
+                    . 'WHERE virtualhost_domain_alias.virtualhost=:id');
+            $stmt->execute([':id' => $row['aid']]);
+            foreach ($stmt->fetchAll() as $alias) {
+                $domain = trim($alias['subdomain'] . '.' . $alias['domain']);
+                if (!$this->certificate($domain, $alias['admin'])) {
+                    continue;
+                }
+                if (!$this->certificate("www.$domain", $alias['admin'])) {
+                    continue;
+                }
+                $aliases[] = $domain;
+                $aliases[] = "www.$domain";
+            }
             $virtualhosts[] = [
                 'domain' => $vhost,
                 'vhost' => $vhost,
                 'webroot' => $row['extra_webroot'] === '1' ? "/var/$vhost/public" : "/var/$vhost",
                 'root' => "/var/$vhost",
                 'admin' => $row['admin'],
-            ];
-            $virtualhosts[] = [
-                'domain' => $vhost,
-                'vhost' => 'www.' . $vhost,
-                'webroot' => $row['extra_webroot'] === '1' ? "/var/$vhost/public" : "/var/$vhost",
-                'root' => "/var/$vhost",
-                'admin' => $row['admin'],
+                'aliases' => $aliases
             ];
             if (!is_dir('/var/' . $vhost)) {
                 mkdir('/var/' . $vhost);
@@ -104,7 +115,7 @@ class VirtualHostGenerator
         sleep(60);
         $hostname = gethostname();
         $ip = gethostbyname($hostname);
-        $stmt = $this->database->prepare('SELECT virtualhost.name,virtualhost.extra_webroot,domain.domain, domain.admin
+        $stmt = $this->database->prepare('SELECT virtualhost.aid,virtualhost.name,virtualhost.extra_webroot,domain.domain, domain.admin
 FROM virtualhost
 INNER JOIN server ON server.aid=virtualhost.server
 INNER JOIN domain ON domain.aid=virtualhost.domain

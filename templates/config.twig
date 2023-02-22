@@ -2,7 +2,6 @@
     <VirtualHost *:80>
         {% include 'config-based-virtual-host.twig' %}
 
-        RewriteEngine On
         RewriteCond %{HTTPS} !=on
         RewriteRule (.*) https://{{ host.vhost }}$1 [R,L]
     </VirtualHost>

@@ -2,6 +2,12 @@ ServerAdmin {{ host.admin }}
 {% if host.vhost starts with '*' %}Servername {{ host.domain }}
 ServerAlias {{ host.vhost }}{% else %}Servername {{ host.vhost }}{% endif %}
 
+{% for alias in host.aliases %}
+
+ServerAlias {{ alias }}
+
+{% endfor %}
+
 DocumentRoot {{ host.webroot }}
 ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
 ErrorLog /var/log/{{ host.domain }}-error.log
@@ -24,3 +30,6 @@ CustomLog /var/log/{{ host.domain }}-access.log "%l %u %t \"%r\" %>s %b"
 </Directory>
 Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 Header set Content-Security-Policy upgrade-insecure-requests
+RewriteEngine On
+RewriteCond %{HTTP_HOST} !^{{ host.domain }}$ [NC]
+RewriteRule (.*) https://{{ host.domain }}$1 [R,L]
