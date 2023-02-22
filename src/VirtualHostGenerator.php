@@ -59,6 +59,7 @@ class VirtualHostGenerator
             $stmt->execute([':id' => $row['aid']]);
             foreach ($stmt->fetchAll() as $alias) {
                 $domain = trim($alias['subdomain'] . '.' . $alias['domain'], '.');
+                echo "  Handling Alias $domain\n";
                 if (!$this->certificate($domain, $alias['admin'])) {
                     continue;
                 }
