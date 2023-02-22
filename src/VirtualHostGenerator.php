@@ -58,7 +58,7 @@ class VirtualHostGenerator
                     . 'WHERE virtualhost_domain_alias.virtualhost=:id');
             $stmt->execute([':id' => $row['aid']]);
             foreach ($stmt->fetchAll() as $alias) {
-                $domain = trim($alias['subdomain'] . '.' . $alias['domain']);
+                $domain = trim($alias['subdomain'] . '.' . $alias['domain'], '.');
                 if (!$this->certificate($domain, $alias['admin'])) {
                     continue;
                 }
