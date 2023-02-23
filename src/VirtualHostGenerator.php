@@ -42,16 +42,14 @@ class VirtualHostGenerator
             if (gethostbyname($vhost . '.') !== $ip) {
                 continue;
             }
-            if (gethostbyname('www.' . $vhost . '.') !== $ip) {
-                continue;
-            }
             if (!$this->certificate($vhost, $row['admin'])) {
                 continue;
             }
-            if (!$this->certificate("www.$vhost", $row['admin'])) {
-                continue;
+            $aliases = [];
+            echo "  Handling Alias www.$vhost\n";
+            if (gethostbyname("www.$vhost.") !== $ip && $this->certificate("www.$vhost", $row['admin'])) {
+                $aliases[] = "www.$vhost";
             }
-            $aliases = ["www.$vhost"];
             $stmt = $this->database->prepare('SELECT virtualhost_domain_alias.subdomain,domain.domain,domain.admin '
                     . 'FROM virtualhost_domain_alias '
                     . 'INNER JOIN domain ON domain.aid=virtualhost_domain_alias.domain '
@@ -60,14 +58,13 @@ class VirtualHostGenerator
             foreach ($stmt->fetchAll() as $alias) {
                 $domain = trim($alias['subdomain'] . '.' . $alias['domain'], '.');
                 echo "  Handling Alias $domain\n";
-                if (!$this->certificate($domain, $alias['admin'])) {
-                    continue;
+                if (gethostbyname("$domain.") !== $ip && $this->certificate($domain, $alias['admin'])) {
+                    $aliases[] = $domain;
                 }
-                if (!$this->certificate("www.$domain", $alias['admin'])) {
-                    continue;
+                echo "  Handling Alias www.$domain\n";
+                if (gethostbyname("www.$domain.") !== $ip && $this->certificate("www.$domain", $alias['admin'])) {
+                    $aliases[] = "www.$domain";
                 }
-                $aliases[] = $domain;
-                $aliases[] = "www.$domain";
             }
             $virtualhosts[] = [
                 'domain' => $vhost,
