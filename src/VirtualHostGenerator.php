@@ -107,6 +107,23 @@ class VirtualHostGenerator
             ];
         }
     }
+    private function buildServerHost(string $hostname, string $admin, array &$virtualhosts, string $ip): void
+    {
+        echo "Handling $hostname\n";
+        if (gethostbyname($hostname . '.') !== $ip) {
+            return;
+        }
+        if (!$this->certificate($hostname, $admin)) {
+            return;
+        }
+        $virtualhosts[] = [
+            'domain' => $hostname,
+            'vhost' => $hostname,
+            'webroot' => "/var/www/public",
+            'root' => "/var/www",
+            'admin' => $admin,
+        ];
+    }
     public function create()
     {
         exec("service apache2 stop");
@@ -124,6 +141,9 @@ WHERE server.hostname=:hostname');
         $stmt = $this->database->prepare("SELECT domain.domain, domain.admin FROM domain");
         $stmt->execute();
         $defaulthosts = [];
+        $stmt = $this->database->prepare('SELECT admin FROM server WHERE hostname=:hostname');
+        $stmt->execute([':hostname' => $hostname]);
+        $this->buildServerHost($hostname, $stmt->fetchColumn(), $virtualhosts, $ip);
         $this->buildDefaultHostList($stmt, $defaulthosts, $ip);
         file_put_contents(
             '/etc/apache2/sites-enabled/all.conf',

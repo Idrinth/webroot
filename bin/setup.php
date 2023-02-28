@@ -26,6 +26,7 @@ ENGINE=InnoDB;");
 $pdo->exec("CREATE TABLE `server` (
 	`aid` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`hostname` VARCHAR(255) NOT NULL COLLATE 'ascii_bin',
+	`admin` VARCHAR(255) NOT NULL COLLATE 'ascii_bin',
 	PRIMARY KEY (`aid`) USING BTREE,
 	UNIQUE INDEX `hostname` (`hostname`) USING BTREE
 )
