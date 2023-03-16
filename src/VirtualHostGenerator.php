@@ -68,7 +68,6 @@ class VirtualHostGenerator
             }
             $virtualhosts[] = [
                 'domain' => $vhost,
-                'vhost' => $vhost,
                 'webroot' => $row['extra_webroot'] === '1' ? "/var/$vhost/public" : "/var/$vhost",
                 'root' => "/var/$vhost",
                 'admin' => $row['admin'],
@@ -100,7 +99,7 @@ class VirtualHostGenerator
             }
             $virtualhosts[] = [
                 'domain' => $vhost,
-                'vhost' => '*.' . $row['domain'],
+                'aliases' => ['*.' . $row['domain']],
                 'webroot' => "/var/www/public",
                 'root' => "/var/www",
                 'admin' => $row['admin'],
@@ -118,7 +117,7 @@ class VirtualHostGenerator
         }
         $virtualhosts[] = [
             'domain' => $hostname,
-            'vhost' => $hostname,
+            'aliases' => ['*'],
             'webroot' => "/var/www/public",
             'root' => "/var/www",
             'admin' => $admin,
@@ -141,13 +140,16 @@ WHERE server.hostname=:hostname');
         $stmt = $this->database->prepare("SELECT domain.domain, domain.admin FROM domain");
         $stmt->execute();
         $defaulthosts = [];
+        $this->buildDefaultHostList($stmt, $defaulthosts, $ip);
         $stmt = $this->database->prepare('SELECT admin FROM server WHERE hostname=:hostname');
         $stmt->execute([':hostname' => $hostname]);
         $this->buildServerHost($hostname, $stmt->fetchColumn(), $virtualhosts, $ip);
-        $this->buildDefaultHostList($stmt, $defaulthosts, $ip);
         file_put_contents(
             '/etc/apache2/sites-enabled/all.conf',
-            $this->twig->render('config.twig', ['virtualhosts' => $virtualhosts, 'defaulthosts' => $defaulthosts])
+            $this->twig->render('config.twig', [
+                'virtualhosts' => $virtualhosts,
+                'defaulthosts' => $defaulthosts,
+            ])
         );
         exec("service apache2 start");
     }

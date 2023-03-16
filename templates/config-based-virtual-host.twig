@@ -1,6 +1,5 @@
 ServerAdmin {{ host.admin }}
-{% if host.vhost starts with '*' %}Servername {{ host.domain }}
-ServerAlias {{ host.vhost }}{% else %}Servername {{ host.vhost }}{% endif %}
+Servername {{ host.domain }}
 
 {% for alias in host.aliases %}
 
