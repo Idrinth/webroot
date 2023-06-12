@@ -30,6 +30,9 @@ CustomLog /var/log/{{ host.domain }}-access.log "%l %u %t \"%r\" %>s %b"
 <IfModule php7_module>
     php_value atatus.app_name "{{ host.domain }}"
 </IfModule>
+<IfModule php_module>
+    php_value atatus.app_name "{{ host.domain }}"
+</IfModule>
 Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 Header set Content-Security-Policy upgrade-insecure-requests
 RewriteEngine On
