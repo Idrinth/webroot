@@ -3,6 +3,7 @@
 namespace De\Idrinth\WebRoot;
 
 use PDO;
+use PDOStatement;
 use Twig\Environment;
 
 class VirtualHostGenerator
@@ -34,7 +35,7 @@ class VirtualHostGenerator
         }
         return true;
     }
-    private function buildHostList(\PDOStatement $statement, array &$virtualhosts, string $ip): void
+    private function buildHostList(PDOStatement $statement, array &$virtualhosts, string $ip): void
     {
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $vhost = trim($row['name'] . '.' . $row['domain'], '.');
@@ -71,7 +72,8 @@ class VirtualHostGenerator
                 'webroot' => $row['extra_webroot'] === '1' ? "/var/$vhost/public" : "/var/$vhost",
                 'root' => "/var/$vhost",
                 'admin' => $row['admin'],
-                'aliases' => $aliases
+                'aliases' => $aliases,
+                'atatus_license_key' => $row['atatus_license_key'],
             ];
             if (!is_dir('/var/' . $vhost)) {
                 mkdir('/var/' . $vhost);
@@ -83,7 +85,7 @@ class VirtualHostGenerator
             }
         }
     }
-    private function buildDefaultHostList(\PDOStatement $statement, array &$virtualhosts, string $ip): void
+    private function buildDefaultHostList(PDOStatement $statement, array &$virtualhosts, string $ip): void
     {
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $vhost = 'default.' . $row['domain'];
@@ -129,10 +131,11 @@ class VirtualHostGenerator
         sleep(60);
         $hostname = gethostname();
         $ip = gethostbyname($hostname);
-        $stmt = $this->database->prepare('SELECT virtualhost.aid,virtualhost.name,virtualhost.extra_webroot,domain.domain, domain.admin
+        $stmt = $this->database->prepare('SELECT virtualhost.aid,virtualhost.name,virtualhost.extra_webroot,domain.domain, domain.admin,owner.atatus_api_key
 FROM virtualhost
 INNER JOIN server ON server.aid=virtualhost.server
 INNER JOIN domain ON domain.aid=virtualhost.domain
+INNER JOIN owner ON owner.aid=domain.owner
 WHERE server.hostname=:hostname');
         $stmt->execute([':hostname' => $hostname]);
         $virtualhosts = [];

@@ -29,9 +29,13 @@ CustomLog /var/log/{{ host.domain }}-access.log "%l %u %t \"%r\" %>s %b"
 </Directory>
 <IfModule php7_module>
     php_value atatus.app_name "{{ host.domain }}"
+
+    {% if host.atatus_license_key %}php_value atatus.license_key "{{ host.atatus_license_key }}"{% endif %}
 </IfModule>
 <IfModule php_module>
     php_value atatus.app_name "{{ host.domain }}"
+
+    {% if host.atatus_license_key %}php_value atatus.license_key "{{ host.atatus_license_key }}"{% endif %}
 </IfModule>
 Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 Header set Content-Security-Policy upgrade-insecure-requests

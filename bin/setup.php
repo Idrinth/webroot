@@ -14,12 +14,22 @@ DB_USER=$user
 DB_PASSWORD=$password
 DB_HOST=$host");
 $pdo = new PDO("mysql:dbname=$database;host=$host", $username, $password);
+$pdo->exec("CREATE TABLE `owner` (
+	`aid` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL COLLATE 'ascii_bin',
+	`atatus_license_key` VARCHAR(255) NOT NULL COLLATE 'ascii_bin',
+	PRIMARY KEY (`aid`) USING BTREE
+)
+COLLATE='ascii_bin'
+ENGINE=InnoDB;");
 $pdo->exec("CREATE TABLE `domain` (
 	`aid` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`domain` VARCHAR(255) NULL DEFAULT NULL COLLATE 'ascii_bin',
 	`admin` VARCHAR(255) NOT NULL COLLATE 'ascii_bin',
+	`owner` INT(10) UNSIGNED NOT NULL,
 	PRIMARY KEY (`aid`) USING BTREE,
-	UNIQUE INDEX `domain` (`domain`) USING BTREE
+	UNIQUE INDEX `domain` (`domain`) USING BTREE,
+	CONSTRAINT `owner` FOREIGN KEY (`owner`) REFERENCES `virtualhosts`.`owner` (`aid`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 COLLATE='ascii_bin'
 ENGINE=InnoDB;");
